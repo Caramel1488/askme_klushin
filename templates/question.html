@@ -1,0 +1,73 @@
+{% extends "include/base.html" %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+<!-- QUESTION BLOCK -->
+<div class="row onequestion">
+    <div class="col-3">
+        <img src="{{ question.profile.avatar.url }}">
+        <div class="row question-rating">
+            <div class="col-7 count" id="question-{{ question.id }}">
+                {{ question.rating }}
+            </div>
+            <div class="col-5 regs">
+                <input class="js-vote" type="image" name="down" src="{% static 'img/arrow-down-short.svg' %}"
+                       alt="submit" width="15" height="15"
+                       data-action="dislike" data-id="{{ question.id }}" data-content="question">
+                <input class="js-vote" type="image" name="up" src="{% static 'img/arrow-up-short.svg' %}"
+                       alt="submit" width="15" height="15"
+                       data-action="like" data-id="{{ question.id }}" data-content="question">
+            </div>
+        </div>
+    </div>
+    <div class="col-9">
+        <div class="row">
+            <a href="{% url 'one_question' pk=question.id %}">
+                <h2>{{ question.title }}</h2>
+            </a>
+            <div>
+                {{ question.text }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <a>answer ({{ question.answer_count }})</a>
+            </div>
+            <div class="col-1">
+                Tags:
+            </div>
+            <div class="col-8">
+                {% for tag in question.tags.all %}
+                    <a href="{% url 'questions_by_tag' tag_name=tag.tag %}" class="question-tag">{{ tag.tag }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="mb-4">
+
+<!-- comments -->
+{% for comment in questions %}
+    {% include "include/comment.html" %}
+{% endfor %}
+
+<!-- Pagination -->
+{% include "include/pagination.html" %}
+
+<hr class="mb-4">
+
+<!-- comment area -->
+{% if request.user.is_authenticated %}
+<form class="form md-5" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+        <button class="btn btn-primary" type="submit">Answer</button>
+    {% endbuttons %}
+</form>
+{% else %}
+<p>Only registered users can comment. <a href="{% url 'login' %}">Log in</a> or <a href="{% url 'signup' %}">Create account</a>.</p>
+{% endif %}
+{% endblock content %}

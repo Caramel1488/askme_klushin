@@ -1,0 +1,15 @@
+{% extends "include/base.html" %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+<br><h2>New Question</h2>
+<form class="form md-5" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+        <button type="submit" class="btn btn-primary">Ask question</button>
+    {% endbuttons %}
+</form>
+{% endblock content %}
+
